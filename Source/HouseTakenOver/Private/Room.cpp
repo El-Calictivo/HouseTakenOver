@@ -22,19 +22,21 @@ void ARoom::BeginPlay()
 void ARoom::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	SetVoidLevel(VoidLevel + DeltaTime);
+
 
 }
 
 
 void ARoom::SetVoidLevel(float NewVoidLevel)
 {
-	if (RoomState == ERoomState::SEALED || RoomState == ERoomState::TAKEN)return;
-	if (VoidLevel == NewVoidLevel)return;
 
-	VoidLevel = NewVoidLevel;
-	OnVoidLevelChanged(NewVoidLevel);
+	VoidLevel += NewVoidLevel;
+	OnVoidLevelChanged(VoidLevel);
 
+	if (VoidLevel >= 100) {
+		VoidLevel = 100;
+		SetRoomState(ERoomState::TAKEN);
+	}
 }
 
 void ARoom::SetRoomState(ERoomState NewRoomState)

@@ -28,7 +28,7 @@ protected:
 	TSet<ARoom*> AdjacentRooms;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
-	ERoomState RoomState;
+	ERoomState RoomState = ERoomState::UNASSIGNED;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

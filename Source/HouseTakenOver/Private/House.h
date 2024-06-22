@@ -39,21 +39,21 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	ARoom* GetRandomRoom(ERoomState RoomState);
 
-	UFUNCTION(BlueprintCallable)
-	bool TryTakingRoom(ARoom* Room);
-
-	void InitializeRoomCollections();
 
 	void ClearRoomCollections();
 
 	TArray<ARoom*>* GetRoomCollection(ERoomState RoomState);
 
 
+	UFUNCTION(BlueprintNativeEvent)
+	void OnRoomStateChanged(ARoom* Room, const ERoomState OldState, const ERoomState NewState);
+
+	UFUNCTION(BlueprintCallable)
+	void IncreaseHouseGrasp(float GraspAmount);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintNativeEvent)
-	void OnRoomStateChanged( ARoom* Room, const ERoomState OldState, const ERoomState NewState);
 
 };

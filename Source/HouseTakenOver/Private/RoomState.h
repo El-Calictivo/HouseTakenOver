@@ -8,7 +8,8 @@
 UENUM(BlueprintType)
 enum class ERoomState: uint8
 {
-	CLEAR UMETA(DisplayName = "Clear"),
+	UNASSIGNED UMETA(DisplayName = "Unassigned"),
+	AVAILABLE UMETA(DisplayName = "Available"),
 	BEING_TAKEN UMETA(DisplayName = "Being Taken"),
 	TAKEN UMETA(DisplayName = "Taken"),
 	SEALED UMETA(DisplayName = "Sealed"),

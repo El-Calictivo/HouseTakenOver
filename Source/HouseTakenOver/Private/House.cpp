@@ -15,7 +15,15 @@ AHouse::AHouse()
 void AHouse::BeginPlay()
 {
 
-	InitializeRoomCollections();
+	ClearRoomCollections();
+
+	for (ARoom* Room : Rooms)
+	{
+		if (Room == nullptr)continue;
+
+		Room->OnRoomStateChanged.AddDynamic(this, &AHouse::OnRoomStateChanged);
+		Room->SetRoomState(ERoomState::AVAILABLE);
+	}
 	Super::BeginPlay();
 
 }
@@ -36,31 +44,6 @@ ARoom* AHouse::GetRandomRoom(ERoomState RoomState)
 	RoomCollection->RemoveAt(RandomIndex);
 	return GetRandomRoom(RoomState);
 }
-
-bool AHouse::TryTakingRoom(ARoom* Room)
-{
-
-	if (Room == nullptr || Room->GetRoomState() != ERoomState::CLEAR)return false;
-	Room->SetRoomState(ERoomState::BEING_TAKEN);
-
-	return true;
-}
-
-void AHouse::InitializeRoomCollections()
-{
-
-	ClearRoomCollections();
-
-	for (ARoom* Room : Rooms)
-	{
-		if (Room == nullptr)continue;
-
-		Room->OnRoomStateChanged.AddDynamic(this, &AHouse::OnRoomStateChanged);
-		GetRoomCollection(Room->GetRoomState())->AddUnique(Room);
-		Room->SetRoomState(Room->GetRoomState());
-	}
-}
-
 
 void AHouse::ClearRoomCollections()
 {
@@ -84,7 +67,6 @@ TArray<ARoom*>* AHouse::GetRoomCollection(ERoomState RoomState)
 	case ERoomState::SEALED:
 		return  &RoomsSealed;
 
-	case ERoomState::CLEAR:
 	default:
 		return  &RoomsAvailable;
 	}
@@ -96,10 +78,21 @@ void AHouse::OnRoomStateChanged_Implementation(ARoom* Room, const ERoomState Old
 
 	GetRoomCollection(OldState)->Remove(Room);
 	GetRoomCollection(NewState)->AddUnique(Room);
-	UE_LOG(LogTemp, Warning, TEXT("USED FROM C++"));
+
+
 }
 
+void AHouse::IncreaseHouseGrasp(float GraspAmount)
+{
+	if (RoomsBeingTaken.IsEmpty())return;
 
+	for (ARoom* Room : RoomsBeingTaken)
+	{
+		if (Room == nullptr)continue;
+		Room->SetVoidLevel(GraspAmount);
+	}
+
+}//Closes IncreaseHouseGrasp method
 
 void AHouse::Tick(float DeltaTime)
 {
