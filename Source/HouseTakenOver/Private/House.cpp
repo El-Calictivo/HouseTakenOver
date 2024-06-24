@@ -51,6 +51,7 @@ void AHouse::ClearRoomCollections()
 	RoomsBeingTaken.Empty();
 	RoomsTaken.Empty();
 	RoomsSealed.Empty();
+	RoomsUnassigned.Empty();
 }
 
 TArray<ARoom*>* AHouse::GetRoomCollection(ERoomState RoomState)
@@ -67,8 +68,10 @@ TArray<ARoom*>* AHouse::GetRoomCollection(ERoomState RoomState)
 	case ERoomState::SEALED:
 		return  &RoomsSealed;
 
-	default:
+	case ERoomState::AVAILABLE:
 		return  &RoomsAvailable;
+	default:
+		return  &RoomsUnassigned;
 	}
 }
 
@@ -78,8 +81,6 @@ void AHouse::OnRoomStateChanged_Implementation(ARoom* Room, const ERoomState Old
 
 	GetRoomCollection(OldState)->Remove(Room);
 	GetRoomCollection(NewState)->AddUnique(Room);
-
-
 }
 
 void AHouse::IncreaseHouseGrasp(float GraspAmount)
@@ -89,7 +90,25 @@ void AHouse::IncreaseHouseGrasp(float GraspAmount)
 	for (ARoom* Room : RoomsBeingTaken)
 	{
 		if (Room == nullptr)continue;
-		Room->SetVoidLevel(GraspAmount);
+		Room->GraspRoom(GraspAmount);
+	}
+
+}//Closes IncreaseHouseGrasp method
+
+void AHouse::RadiateGraspInfluence(float GraspAmount)
+{
+	if (RoomsSealed.IsEmpty() && RoomsTaken.IsEmpty())return;
+
+	TArray<ARoom*> InfluencerRooms;
+
+	InfluencerRooms.Append(*GetRoomCollection(ERoomState::TAKEN));
+	InfluencerRooms.Append(*GetRoomCollection(ERoomState::SEALED));
+
+
+	for (ARoom* Room : InfluencerRooms)
+	{
+		if (Room == nullptr)continue;
+		Room->InfluencAdjacentRooms(GraspAmount);
 	}
 
 }//Closes IncreaseHouseGrasp method

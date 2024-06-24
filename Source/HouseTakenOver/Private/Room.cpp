@@ -22,21 +22,20 @@ void ARoom::BeginPlay()
 void ARoom::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-
 }
 
 
-void ARoom::SetVoidLevel(float NewVoidLevel)
+void ARoom::GraspRoom(float GraspAmount)
 {
 
-	VoidLevel += NewVoidLevel;
-	OnVoidLevelChanged(VoidLevel);
+	GraspedLevel += GraspAmount;
 
-	if (VoidLevel >= 100) {
-		VoidLevel = 100;
-		SetRoomState(ERoomState::TAKEN);
+	if (GraspedLevel >= 100) {
+		GraspedLevel = 100;
+		if (RoomState != ERoomState::SEALED)SetRoomState(ERoomState::TAKEN);
 	}
+
+	OnGraspedLevelChanged(GraspedLevel);
 }
 
 void ARoom::SetRoomState(ERoomState NewRoomState)
@@ -44,24 +43,25 @@ void ARoom::SetRoomState(ERoomState NewRoomState)
 	ERoomState OldState = RoomState;
 	RoomState = NewRoomState;
 	OnRoomStateChanged.Broadcast(this, OldState, RoomState);
-}//Closes SetRoomState Method
-
-float ARoom::GetVoidLevel() const
-{
-	return VoidLevel;
-}//Closes GetVoidLevel method
+}
 
 ERoomState ARoom::GetRoomState() const
 {
 	return RoomState;
-}//Closes GetRoomState method
+}
 
-void ARoom::InfluencAdjacentRooms() {
+void ARoom::InfluencAdjacentRooms(float GraspAmount) {
 
-	for (auto Room : AdjacentRooms) {
+	if (AdjacentRooms.IsEmpty())return;
+
+	for (ARoom* Room : AdjacentRooms)
+	{
 		if (Room == nullptr)continue;
 
-
+		if (RoomState == ERoomState::TAKEN)
+			Room->GraspRoom(GraspAmount * TakenInfluenceMultiplier);
+		else if (RoomState == ERoomState::SEALED)
+			Room->GraspRoom(GraspAmount * SealedInfluenceMultiplier);
 	}
 }
 

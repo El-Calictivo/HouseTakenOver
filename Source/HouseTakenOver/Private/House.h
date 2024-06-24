@@ -17,6 +17,7 @@ public:
 	AHouse();
 
 protected:
+
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
 	TSet<ARoom*> Rooms;
 
@@ -32,6 +33,8 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
 	TArray<ARoom*> RoomsSealed;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
+	TArray<ARoom*> RoomsUnassigned;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -50,6 +53,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void IncreaseHouseGrasp(float GraspAmount);
+
+	UFUNCTION(BlueprintCallable)
+	void RadiateGraspInfluence(float GraspAmount);
 
 public:
 	// Called every frame
