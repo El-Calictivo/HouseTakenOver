@@ -40,6 +40,7 @@ void ARoom::GraspRoom(float GraspAmount)
 
 void ARoom::SetRoomState(ERoomState NewRoomState)
 {
+	if (RoomState == NewRoomState)return;
 	ERoomState OldState = RoomState;
 	RoomState = NewRoomState;
 	OnRoomStateChanged.Broadcast(this, OldState, RoomState);
@@ -56,7 +57,7 @@ void ARoom::InfluencAdjacentRooms(float GraspAmount) {
 
 	for (ARoom* Room : AdjacentRooms)
 	{
-		if (Room == nullptr)continue;
+		if (!Room)continue;
 
 		if (RoomState == ERoomState::TAKEN)
 			Room->GraspRoom(GraspAmount * TakenInfluenceMultiplier);

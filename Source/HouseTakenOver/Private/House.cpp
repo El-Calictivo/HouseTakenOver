@@ -2,6 +2,7 @@
 
 
 #include "House.h"
+#include "Room.h"
 
 // Sets default values
 AHouse::AHouse()
@@ -19,7 +20,7 @@ void AHouse::BeginPlay()
 
 	for (ARoom* Room : Rooms)
 	{
-		if (Room == nullptr)continue;
+		if (!Room)continue;
 
 		Room->OnRoomStateChanged.AddDynamic(this, &AHouse::OnRoomStateChanged);
 		Room->SetRoomState(ERoomState::AVAILABLE);
@@ -32,14 +33,14 @@ ARoom* AHouse::GetRandomRoom(ERoomState RoomState)
 {
 	TArray<ARoom*>* RoomCollection = GetRoomCollection(RoomState);
 
-	if (RoomCollection == nullptr || RoomCollection->IsEmpty()) return nullptr;
+	if (!RoomCollection || RoomCollection->IsEmpty()) return nullptr;
 
 
 	int8 RandomIndex = FMath::RandRange(0, RoomCollection->Num() - 1);
 
 	ARoom* RandomRoom = (*RoomCollection)[RandomIndex];
 
-	if (RandomRoom != nullptr) return RandomRoom;
+	if (RandomRoom!=nullptr) return RandomRoom;
 
 	RoomCollection->RemoveAt(RandomIndex);
 	return GetRandomRoom(RoomState);
@@ -59,6 +60,7 @@ TArray<ARoom*>* AHouse::GetRoomCollection(ERoomState RoomState)
 
 	switch (RoomState)
 	{
+
 	case ERoomState::BEING_TAKEN:
 		return  &RoomsBeingTaken;
 
@@ -70,6 +72,8 @@ TArray<ARoom*>* AHouse::GetRoomCollection(ERoomState RoomState)
 
 	case ERoomState::AVAILABLE:
 		return  &RoomsAvailable;
+
+	case ERoomState::UNASSIGNED:
 	default:
 		return  &RoomsUnassigned;
 	}
@@ -77,10 +81,16 @@ TArray<ARoom*>* AHouse::GetRoomCollection(ERoomState RoomState)
 
 void AHouse::OnRoomStateChanged_Implementation(ARoom* Room, const ERoomState OldState, const ERoomState NewState)
 {
-	if (Room == nullptr)return;
+	
 
 	GetRoomCollection(OldState)->Remove(Room);
 	GetRoomCollection(NewState)->AddUnique(Room);
+
+	//switch (NewState)
+	//{
+	//default:
+	//	break;
+	//}
 }
 
 void AHouse::IncreaseHouseGrasp(float GraspAmount)
@@ -89,11 +99,27 @@ void AHouse::IncreaseHouseGrasp(float GraspAmount)
 
 	for (ARoom* Room : RoomsBeingTaken)
 	{
-		if (Room == nullptr)continue;
+		if (!Room)continue;
 		Room->GraspRoom(GraspAmount);
 	}
 
-}//Closes IncreaseHouseGrasp method
+}
+ARoom* AHouse::TakeNewRoom()
+{
+	if (RoomsAvailable.IsEmpty() || !RoomsBeingTaken.IsEmpty())return nullptr;
+
+	ARoom* ValidRoom = GetRandomRoom(ERoomState::AVAILABLE);
+
+	if (!ValidRoom) return nullptr;
+
+	ValidRoom->SetRoomState(ERoomState::BEING_TAKEN);
+
+	return ValidRoom;
+
+}
+
+
+
 
 void AHouse::RadiateGraspInfluence(float GraspAmount)
 {
@@ -107,7 +133,7 @@ void AHouse::RadiateGraspInfluence(float GraspAmount)
 
 	for (ARoom* Room : InfluencerRooms)
 	{
-		if (Room == nullptr)continue;
+		if (!Room)continue;
 		Room->InfluencAdjacentRooms(GraspAmount);
 	}
 

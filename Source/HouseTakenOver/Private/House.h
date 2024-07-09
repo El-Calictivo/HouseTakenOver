@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include <Room.h>
 #include "House.generated.h"
+
+class ARoom;
 
 UCLASS()
 class AHouse : public AActor
@@ -53,6 +54,10 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void IncreaseHouseGrasp(float GraspAmount);
+
+	UFUNCTION(BlueprintCallable)
+	ARoom* TakeNewRoom();
+
 
 	UFUNCTION(BlueprintCallable)
 	void RadiateGraspInfluence(float GraspAmount);
