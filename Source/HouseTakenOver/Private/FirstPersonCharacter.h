@@ -18,6 +18,9 @@ class AFirstPersonCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
+	class UInteractableTrace* InteractableTraceComponent;
+
 public:
 	// Sets default values for this character's properties
 	AFirstPersonCharacter();
@@ -33,5 +36,8 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+	UFUNCTION()
+	void Interact();
 
 };

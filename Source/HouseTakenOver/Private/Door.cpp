@@ -19,32 +19,23 @@ ADoor::ADoor()
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root Scene"));
 	SetRootComponent(Root);
 
-	//Set Arrow
-	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("Door Anchor"));
-	ArrowComponent->SetArrowLength(100);
-	ArrowComponent->SetupAttachment(Root);
-
-
 	//Mesh
 	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Door Mesh"));
-	DoorMesh->SetRelativeRotation(FVector(0, 90, 0).ToOrientationRotator());
-	DoorMesh->SetRelativeLocation(FVector(55, 5, 0));
-	DoorMesh->SetupAttachment(ArrowComponent);
+	DoorMesh->SetupAttachment(Root);
+	DoorMesh->SetRelativeLocation(FVector(0, 0, 10));
 
 	//Set Interaction Trigger
 	UBoxComponent* BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Interaction Trigger"));
-	BoxComponent->SetBoxExtent(FVector(120, 140, 110));
+	BoxComponent->SetBoxExtent(FVector(100, 80, 100));
 
 	InteractionTrigger = BoxComponent;
 	InteractionTrigger->SetupAttachment(DoorMesh);
-	InteractionTrigger->SetRelativeLocation(FVector(0, 0, 110));
-	InteractionTrigger->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
-	InteractionTrigger->SetGenerateOverlapEvents(true);
+	InteractionTrigger->SetRelativeLocation(FVector(0, 80, 100));
 
 
 	//Interactable Component
 	InteractableComponent = CreateDefaultSubobject<UInteractable>(TEXT("Door Interactable"));
-	InteractableComponent->SetCollider(BoxComponent);
+
 
 }
 
@@ -57,22 +48,26 @@ void ADoor::FlipFlopDoor()
 void ADoor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InitializeInteractableComponent(this, InteractionTrigger, DoorMesh);
 	SetIsOpen(bIsOpen);
-	InteractableComponent->OnPlayerInteracted.AddUniqueDynamic(this, &ADoor::FlipFlopDoor);
+
 }
 
 
 bool ADoor::SetIsOpen(bool isOpen)
 {
+	if (bIsSealed)isOpen = false;
 	bIsOpen = isOpen;
 
 	if (bIsOpen) {
 
-		ArrowComponent->SetRelativeRotation(FVector(0, 100, 0).ToOrientationRotator(), true);
+		FQuat DesiredRotation = FQuat::MakeFromEuler(FVector(0, 0, 110));
+		DoorMesh->SetRelativeRotation(DesiredRotation, true);
 	}
 	else {
 
-		ArrowComponent->SetRelativeRotation(FVector(0, 0, 0).ToOrientationRotator(), true);
+		DoorMesh->SetRelativeRotation(FRotator::ZeroRotator, true);
 
 	}
 
@@ -86,3 +81,14 @@ void ADoor::Tick(float DeltaTime)
 
 }
 
+
+void ADoor::InitializeInteractableComponent(TScriptInterface<IInteractableActor> OwnerActor, UPrimitiveComponent* TrigggerSet, UStaticMeshComponent* MeshSet)
+{
+	InteractableComponent->Initialize(OwnerActor, TrigggerSet, MeshSet);
+	InteractableComponent->OnPlayerInteracted.AddUniqueDynamic(this, &ADoor::FlipFlopDoor);
+}
+
+UInteractable* ADoor::GetInteractableComponent()
+{
+	return InteractableComponent;
+}

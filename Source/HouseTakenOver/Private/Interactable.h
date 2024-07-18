@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "Interactable.generated.h"
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUserInteractedEvent);
 class AFirstPersonPlayerController;
@@ -24,20 +24,15 @@ protected:
 
 private:
 
-	UPROPERTY()
-	AFirstPersonPlayerController* PlayerController;
-
-	UPROPERTY()
-	uint32 InteractionHandle=0;
 
 	UPROPERTY(VisibleAnywhere)
-	class UPrimitiveComponent* Collider;
+	TScriptInterface<IInteractableActor> InteractableOwner;
 
-	UFUNCTION()
-	void OnInteractableOnRange(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UPROPERTY(VisibleAnywhere)
+	class UPrimitiveComponent* InteractableTrigger;
 
-	UFUNCTION()
-	void OnInteractableOutsideRange(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* InteractableMesh;
 
 
 public:
@@ -48,9 +43,13 @@ public:
 	FUserInteractedEvent OnPlayerInteracted;
 
 	UFUNCTION()
-	void SetCollider(UPrimitiveComponent* NewCollider);
+	void Initialize(TScriptInterface<IInteractableActor> OwnerActor, UPrimitiveComponent* TrigggerSet, UStaticMeshComponent* MeshSet);
 
 	UFUNCTION()
-	void Interact();
+	void Focus(bool bIsFocused);
+
+
+	UFUNCTION()
+	void Interact() const;
 
 };

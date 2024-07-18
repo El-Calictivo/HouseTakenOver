@@ -19,6 +19,9 @@ private:
 	UPROPERTY()
 	class UEnhancedInputComponent* EnhancedInputComponent;
 
+	UPROPERTY()
+	class AFirstPersonCharacter* FPCharacter;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -26,7 +29,13 @@ protected:
 	// Called to bind functionality to input
 	virtual void SetupInputComponent() override;
 
+	UFUNCTION()
 	void Move(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void Interact();
+
+	UFUNCTION()
 	void Look(const FInputActionValue& Value);
 
 public:
@@ -47,8 +56,5 @@ public:
 	class UInputAction* InteractAction;
 
 
-	uint32 BindInteractable( UInteractable* Interactable);
-
-	void RemoveInteractable( uint32& Binding);
 
 };

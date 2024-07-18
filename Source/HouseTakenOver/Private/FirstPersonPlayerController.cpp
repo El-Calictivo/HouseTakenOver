@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "FirstPersonCharacter.h"
 #include "Interactable.h"
 
 
@@ -18,6 +19,9 @@ void AFirstPersonPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 
 	}
+
+	FPCharacter = Cast<AFirstPersonCharacter>(GetPawn());
+
 }
 
 void AFirstPersonPlayerController::SetupInputComponent()
@@ -29,7 +33,7 @@ void AFirstPersonPlayerController::SetupInputComponent()
 
 		EnhancedInputComponent->BindAction(MoveCharacterAction, ETriggerEvent::Triggered, this, &AFirstPersonPlayerController::Move);
 		EnhancedInputComponent->BindAction(MoveCameraAction, ETriggerEvent::Triggered, this, &AFirstPersonPlayerController::Look);
-
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AFirstPersonPlayerController::Interact);
 	}
 }
 
@@ -38,34 +42,25 @@ void AFirstPersonPlayerController::Move(const FInputActionValue& Value)
 
 	FVector2D InputVector = Value.Get<FVector2D>();
 
-	GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), InputVector.X);
-	GetPawn()->AddMovementInput(GetPawn()->GetActorForwardVector(), InputVector.Y);
+	FPCharacter->AddMovementInput(GetPawn()->GetActorRightVector(), InputVector.X);
+	FPCharacter->AddMovementInput(GetPawn()->GetActorForwardVector(), InputVector.Y);
 
+}
+
+void AFirstPersonPlayerController::Interact()
+{
+	FPCharacter->Interact();
 }
 
 void AFirstPersonPlayerController::Look(const FInputActionValue& Value)
 {
 	FVector2D InputVector = Value.Get<FVector2D>();
 
-	GetPawn()->AddControllerYawInput(InputVector.X);
-	GetPawn()->AddControllerPitchInput(InputVector.Y);
+	FPCharacter->AddControllerYawInput(InputVector.X);
+	FPCharacter->AddControllerPitchInput(InputVector.Y);
 }
 
-uint32 AFirstPersonPlayerController::BindInteractable(UInteractable* Interactable)
-{
-	if (!Interactable || !EnhancedInputComponent)return 0;
 
-	FEnhancedInputActionEventBinding& Interaction = EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, Interactable, &UInteractable::Interact);
-	return Interaction.GetHandle();
-
-}
-
-void AFirstPersonPlayerController::RemoveInteractable(uint32& Binding)
-{
-	if (!EnhancedInputComponent)return;
-	EnhancedInputComponent->RemoveBindingByHandle(Binding);
-	
-}
 
 
 

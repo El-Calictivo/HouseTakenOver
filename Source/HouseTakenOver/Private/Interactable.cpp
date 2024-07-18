@@ -5,6 +5,9 @@
 #include <FirstPersonCharacter.h>
 #include <FirstPersonPlayerController.h>
 #include <Kismet/GameplayStatics.h>
+#include "InteractableActor.h"
+
+
 
 // Sets default values for this component's properties
 UInteractable::UInteractable()
@@ -21,7 +24,6 @@ UInteractable::UInteractable()
 void UInteractable::BeginPlay()
 {
 	Super::BeginPlay();
-	PlayerController = Cast<AFirstPersonPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 
 }
 
@@ -34,45 +36,46 @@ void UInteractable::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	// ...
 }
 
-void UInteractable::SetCollider(UPrimitiveComponent* NewCollider)
+
+
+
+
+void UInteractable::Initialize(TScriptInterface<IInteractableActor> OwnerActor, UPrimitiveComponent* TrigggerSet, UStaticMeshComponent* MeshSet)
 {
-	if (Collider) {
+	InteractableTrigger = TrigggerSet;
+	InteractableMesh = MeshSet;
 
-		Collider->OnComponentBeginOverlap.RemoveDynamic(this, &UInteractable::OnInteractableOnRange);
-		Collider->OnComponentEndOverlap.RemoveDynamic(this, &UInteractable::OnInteractableOutsideRange);
-
+	if (InteractableTrigger) {
+		InteractableTrigger->SetCollisionResponseToAllChannels(ECR_Ignore);
+		InteractableTrigger->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	}
 
-	if (NewCollider) {
-
-		NewCollider->OnComponentBeginOverlap.AddDynamic(this, &UInteractable::OnInteractableOnRange);
-		NewCollider->OnComponentEndOverlap.AddDynamic(this, &UInteractable::OnInteractableOutsideRange);
+	if (InteractableMesh) {
+		InteractableMesh->SetCustomDepthStencilValue(1);
 	}
 
-	Collider = NewCollider;
+	if (OwnerActor) {
+		InteractableOwner = OwnerActor;
+	}
+
 }
 
-void UInteractable::Interact()
+void UInteractable::Focus(bool bIsFocused)
 {
+	if (!InteractableMesh)return;
+
+	if (bIsFocused)InteractableMesh->SetRenderCustomDepth(true);
+	else InteractableMesh->SetRenderCustomDepth(false);
+}
+
+void UInteractable::Interact() const
+{
+
 	OnPlayerInteracted.Broadcast();
 }
 
 
 
-void UInteractable::OnInteractableOnRange(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (!PlayerController)return;
-	InteractionHandle = PlayerController->BindInteractable(this);
-
-}
-
-void UInteractable::OnInteractableOutsideRange(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (!PlayerController)return;
-	PlayerController->RemoveInteractable(InteractionHandle);
-
-
-}
 
 
 

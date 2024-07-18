@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "InteractableActor.h"
 #include "Door.generated.h"
 
 
 UCLASS()
-class ADoor : public AActor
+class ADoor : public AActor, public IInteractableActor
 {
 	GENERATED_BODY()
 
@@ -35,21 +36,23 @@ private:
 
 protected:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void BeginPlay() override;;
 
 	UPROPERTY(EditAnywhere)
 	bool bIsOpen;
 
+	UPROPERTY(EditAnywhere)
+	bool bIsSealed;
+
 
 public:
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	class UArrowComponent* ArrowComponent;
 
 	UFUNCTION()
 	bool SetIsOpen(bool isOpen);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void InitializeInteractableComponent(TScriptInterface<IInteractableActor> OwnerActor, UPrimitiveComponent* TrigggerSet, UStaticMeshComponent* MeshSet) override;
+	virtual class UInteractable* GetInteractableComponent() override;
 
 };

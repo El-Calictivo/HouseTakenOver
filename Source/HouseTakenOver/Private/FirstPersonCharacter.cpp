@@ -4,6 +4,7 @@
 #include "FirstPersonCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
+#include "InteractableTrace.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 
@@ -12,7 +13,6 @@ AFirstPersonCharacter::AFirstPersonCharacter()
 {
 
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-
 
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
@@ -27,8 +27,9 @@ AFirstPersonCharacter::AFirstPersonCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -200.f));
 
-
 	GetCharacterMovement()->MaxWalkSpeed = 200;
+
+	InteractableTraceComponent = CreateDefaultSubobject<UInteractableTrace>(TEXT("Interactable Trace"));
 
 }
 
@@ -36,13 +37,19 @@ AFirstPersonCharacter::AFirstPersonCharacter()
 void AFirstPersonCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called to bind functionality to input
 void AFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+}
+
+void AFirstPersonCharacter::Interact()
+{
+	if (InteractableTraceComponent)InteractableTraceComponent->InteractFocuesedInteractable();
 
 }
 
