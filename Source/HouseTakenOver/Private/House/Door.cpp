@@ -73,12 +73,14 @@ void ADoor::HandleOnDoorStateChanged(const EDoorState NewDoorState)
 	switch (NewDoorState)
 	{
 	case EDoorState::OPEN:
-		DoorMesh->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0, 0, 110)), true);
+		DoorMesh->SetRelativeRotation(bInvertDirection ? OpenDoorAngle * -1 : OpenDoorAngle);
+		//DoorMesh->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0, 0, 110)), true);
 
 		break;
 
 	default:
-		DoorMesh->SetRelativeRotation(FRotator::ZeroRotator, true);
+		DoorMesh->SetRelativeRotation(bInvertDirection ? ClosedDoorAngle * -1 : ClosedDoorAngle);
+		//DoorMesh->SetRelativeRotation(FRotator::ZeroRotator, true);
 
 	}
 }

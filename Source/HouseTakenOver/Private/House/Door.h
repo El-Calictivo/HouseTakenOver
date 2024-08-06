@@ -9,7 +9,7 @@
 
 
 UENUM(BlueprintType)
-enum class EDoorState : uint8 {	
+enum class EDoorState : uint8 {
 	OPEN UMETA(DisplayName = "Open"),
 	CLOSED UMETA(DisplayName = "Closed"),
 	SEALED UMETA(DisplayName = "Sealed"),
@@ -30,6 +30,14 @@ public:
 
 protected:
 
+	UPROPERTY(EditAnywhere, Category = "Rotation")
+	FRotator ClosedDoorAngle = FRotator::ZeroRotator;
+
+	UPROPERTY(EditAnywhere, Category = "Rotation")
+	FRotator OpenDoorAngle = FRotator(110, 0, 0);
+
+	UPROPERTY(EditAnywhere, Category = "Rotation")
+	bool bInvertDirection = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class USceneComponent* Root;
