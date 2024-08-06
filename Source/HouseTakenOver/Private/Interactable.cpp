@@ -6,7 +6,7 @@
 #include <FirstPersonPlayerController.h>
 #include <Kismet/GameplayStatics.h>
 #include "InteractableActor.h"
-
+#include "Components/WidgetComponent.h"
 
 
 // Sets default values for this component's properties
@@ -40,45 +40,35 @@ void UInteractable::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 
 
-void UInteractable::Initialize(TScriptInterface<IInteractableActor> OwnerActor, UPrimitiveComponent* TrigggerSet, UStaticMeshComponent* MeshSet)
+void UInteractable::Initialize(TScriptInterface<IInteractableActor> OwnerActor)
 {
-	InteractableTrigger = TrigggerSet;
-	InteractableMesh = MeshSet;
 
-	if (InteractableTrigger) {
-		InteractableTrigger->SetCollisionResponseToAllChannels(ECR_Ignore);
-		InteractableTrigger->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	if (!OwnerActor)return;
+
+	InteractableOwner = OwnerActor;
+
+	Collider = InteractableOwner->GetInteractableTrigger();
+	Mesh = InteractableOwner->GetInteractableMesh();
+
+
+	if (Collider) {
+		Collider->SetCollisionResponseToAllChannels(ECR_Ignore);
+		Collider->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	}
 
-	if (InteractableMesh) {
-		InteractableMesh->SetCustomDepthStencilValue(1);
+	if (Mesh) {
+		Mesh->SetCustomDepthStencilValue(1);
 	}
 
-	if (OwnerActor) {
-		InteractableOwner = OwnerActor;
-	}
 
 }
 
 void UInteractable::Focus(bool bIsFocused)
 {
-	if (!InteractableMesh)return;
+	OnPlayerChangedFocus.Broadcast(bIsFocused);
 
-	if (bIsFocused)InteractableMesh->SetRenderCustomDepth(true);
-	else InteractableMesh->SetRenderCustomDepth(false);
+	if (Mesh)Mesh->SetRenderCustomDepth(bIsFocused);
+
 }
-
-void UInteractable::Interact() const
-{
-
-	OnPlayerInteracted.Broadcast();
-}
-
-
-
-
-
-
-
 
 

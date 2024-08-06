@@ -47,9 +47,5 @@ void AFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 }
 
-void AFirstPersonCharacter::Interact()
-{
-	if (InteractableTraceComponent)InteractableTraceComponent->InteractFocuesedInteractable();
 
-}
 

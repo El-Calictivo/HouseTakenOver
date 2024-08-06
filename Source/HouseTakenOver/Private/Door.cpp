@@ -7,7 +7,8 @@
 #include "Components/ArrowComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
-
+#include "Components/WidgetComponent.h"
+#include "RoomState.h"
 
 // Sets default values
 ADoor::ADoor()
@@ -32,7 +33,6 @@ ADoor::ADoor()
 	InteractionTrigger->SetupAttachment(DoorMesh);
 	InteractionTrigger->SetRelativeLocation(FVector(0, 80, 100));
 
-
 	//Interactable Component
 	InteractableComponent = CreateDefaultSubobject<UInteractable>(TEXT("Door Interactable"));
 
@@ -41,7 +41,14 @@ ADoor::ADoor()
 
 void ADoor::FlipFlopDoor()
 {
-	SetIsOpen(!bIsOpen);
+	switch (DoorState)
+	{
+	case EDoorState::CLOSED:
+		SetDoorState(EDoorState::OPEN);
+		break;
+	default:
+		SetDoorState(EDoorState::CLOSED);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -49,29 +56,37 @@ void ADoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitializeInteractableComponent(this, InteractionTrigger, DoorMesh);
-	SetIsOpen(bIsOpen);
+	InitializeInteractableComponent(this);
+
+	OnDoorStateChanged.AddUniqueDynamic(this, &ADoor::HandleOnDoorStateChanged);
+	OnDoorStateChanged.Broadcast(DoorState);
 
 }
 
 
-bool ADoor::SetIsOpen(bool isOpen)
+void ADoor::HandleOnDoorStateChanged(const EDoorState NewDoorState)
 {
-	if (bIsSealed)isOpen = false;
-	bIsOpen = isOpen;
+	switch (NewDoorState)
+	{
+	case EDoorState::OPEN:
+		DoorMesh->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0, 0, 110)), true);
 
-	if (bIsOpen) {
+		break;
 
-		FQuat DesiredRotation = FQuat::MakeFromEuler(FVector(0, 0, 110));
-		DoorMesh->SetRelativeRotation(DesiredRotation, true);
-	}
-	else {
-
+	default:
 		DoorMesh->SetRelativeRotation(FRotator::ZeroRotator, true);
-
+		
 	}
+}
 
-	return bIsOpen;
+
+
+void ADoor::SetDoorState(const EDoorState NewDoorState)
+{
+	if (DoorState == NewDoorState)return;
+	DoorState = NewDoorState;
+	OnDoorStateChanged.Broadcast(DoorState);
+
 }
 
 // Called every frame
@@ -82,13 +97,9 @@ void ADoor::Tick(float DeltaTime)
 }
 
 
-void ADoor::InitializeInteractableComponent(TScriptInterface<IInteractableActor> OwnerActor, UPrimitiveComponent* TrigggerSet, UStaticMeshComponent* MeshSet)
+void ADoor::InitializeInteractableComponent(TScriptInterface<IInteractableActor> OwnerActor)
 {
-	InteractableComponent->Initialize(OwnerActor, TrigggerSet, MeshSet);
+	InteractableComponent->Initialize(OwnerActor);
 	InteractableComponent->OnPlayerInteracted.AddUniqueDynamic(this, &ADoor::FlipFlopDoor);
 }
 
-UInteractable* ADoor::GetInteractableComponent()
-{
-	return InteractableComponent;
-}

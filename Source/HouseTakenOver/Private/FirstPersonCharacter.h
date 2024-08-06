@@ -32,12 +32,12 @@ protected:
 
 
 public:
-	/** Returns Mesh1P subobject **/
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
-	/** Returns FirstPersonCameraComponent subobject **/
+
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-	UFUNCTION()
-	void Interact();
+	UInteractableTrace* GetInteractableTraceComponent() const { return InteractableTraceComponent; }
+
+
 
 };

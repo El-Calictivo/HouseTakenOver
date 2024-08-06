@@ -24,6 +24,7 @@ void UInteractableTrace::SetFocusedInteractable(IInteractableActor* NewInteracta
 {
 	if (FocusedInteractable) FocusedInteractable->GetInteractableComponent()->Focus(false);
 
+
 	if (NewInteractable) {
 		FocusedInteractable.SetInterface(NewInteractable);
 		FocusedInteractable.SetObject(NewInteractable->_getUObject());
@@ -45,6 +46,8 @@ void UInteractableTrace::BeginPlay()
 
 void UInteractableTrace::Trace()
 {
+	if (!CameraManager) return;
+
 	FVector CameraPos = CameraManager->GetCameraLocation();
 	FVector TraceEndPos = CameraPos + (CameraManager->GetActorForwardVector() * InteractionLength);
 
@@ -55,11 +58,7 @@ void UInteractableTrace::Trace()
 
 		if (FocusedInteractable.GetObject() == HittedActor) return;
 
-		if (HittedActor->GetClass()->ImplementsInterface(UInteractableActor::StaticClass()))
-		{
-			IInteractableActor* HittedInteractable = Cast<IInteractableActor>(HittedActor);
-			SetFocusedInteractable(HittedInteractable);
-		}
+		if (HittedActor->GetClass()->ImplementsInterface(UInteractableActor::StaticClass())) SetFocusedInteractable(Cast<IInteractableActor>(HittedActor));
 		else SetFocusedInteractable(nullptr);
 
 	}
@@ -80,7 +79,7 @@ void UInteractableTrace::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 void UInteractableTrace::InteractFocuesedInteractable()
 {
 	if (!FocusedInteractable)return;
-	FocusedInteractable->GetInteractableComponent()->Interact();
+	FocusedInteractable->GetInteractableComponent()->OnPlayerInteracted.Broadcast();
 
 }
 

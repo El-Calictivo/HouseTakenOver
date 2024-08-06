@@ -7,6 +7,9 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUserInteractedEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserChangedFocus, bool, bIsFocused);
+
+
 class AFirstPersonPlayerController;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -28,11 +31,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TScriptInterface<IInteractableActor> InteractableOwner;
 
-	UPROPERTY(VisibleAnywhere)
-	class UPrimitiveComponent* InteractableTrigger;
+	UPROPERTY()
+	class UPrimitiveComponent* Collider;
 
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* InteractableMesh;
+	UPROPERTY()
+	class UStaticMeshComponent* Mesh;
 
 
 public:
@@ -42,14 +45,13 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FUserInteractedEvent OnPlayerInteracted;
 
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FUserChangedFocus OnPlayerChangedFocus;
+
 	UFUNCTION()
-	void Initialize(TScriptInterface<IInteractableActor> OwnerActor, UPrimitiveComponent* TrigggerSet, UStaticMeshComponent* MeshSet);
+	void Initialize(TScriptInterface<IInteractableActor> OwnerActor);
 
 	UFUNCTION()
 	void Focus(bool bIsFocused);
-
-
-	UFUNCTION()
-	void Interact() const;
 
 };

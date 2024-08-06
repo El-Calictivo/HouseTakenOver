@@ -19,7 +19,9 @@ class IInteractableActor
 
 public:
 
-	virtual void InitializeInteractableComponent(TScriptInterface<IInteractableActor> OwnerActor, UPrimitiveComponent* TrigggerSet, UStaticMeshComponent* MeshSet) {}
-	virtual class UInteractable* GetInteractableComponent() { return nullptr; }
-
+	virtual void InitializeInteractableComponent(TScriptInterface<IInteractableActor> OwnerActor) {}
+	virtual class UInteractable* GetInteractableComponent() const { return nullptr; }
+	virtual class UWidgetComponent* GetInteractableWidget() const { return nullptr; }
+	virtual class UStaticMeshComponent* GetInteractableMesh() const  { return nullptr; }
+	virtual class UPrimitiveComponent* GetInteractableTrigger() const  { return nullptr; }
 };

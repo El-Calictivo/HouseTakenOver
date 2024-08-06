@@ -8,6 +8,17 @@
 #include "Door.generated.h"
 
 
+UENUM(BlueprintType)
+enum class EDoorState : uint8 {	
+	OPEN UMETA(DisplayName = "Open"),
+	CLOSED UMETA(DisplayName = "Closed"),
+	SEALED UMETA(DisplayName = "Sealed"),
+	TAKEN UMETA(DisplayName = "Taken"),
+
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDoorStateChanged, EDoorState, State);
+
 UCLASS()
 class ADoor : public AActor, public IInteractableActor
 {
@@ -17,19 +28,21 @@ public:
 	// Sets default values for this actor's properties
 	ADoor();
 
-private:
+protected:
 
-	UPROPERTY(EditDefaultsOnly)
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class USceneComponent* Root;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* DoorMesh;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UPrimitiveComponent* InteractionTrigger;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UInteractable* InteractableComponent;
+
 
 	UFUNCTION()
 	void FlipFlopDoor();
@@ -39,20 +52,30 @@ protected:
 	virtual void BeginPlay() override;;
 
 	UPROPERTY(EditAnywhere)
-	bool bIsOpen;
+	EDoorState DoorState = EDoorState::CLOSED;
 
-	UPROPERTY(EditAnywhere)
-	bool bIsSealed;
+	UFUNCTION()
+	void HandleOnDoorStateChanged(EDoorState NewDoorState);
 
 
 public:
 
+
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FDoorStateChanged OnDoorStateChanged;
+
 	UFUNCTION()
-	bool SetIsOpen(bool isOpen);
+	EDoorState GetState() const { return DoorState; }
+
+	UFUNCTION()
+	void SetDoorState(const EDoorState NewDoorState);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void InitializeInteractableComponent(TScriptInterface<IInteractableActor> OwnerActor, UPrimitiveComponent* TrigggerSet, UStaticMeshComponent* MeshSet) override;
-	virtual class UInteractable* GetInteractableComponent() override;
+	virtual void InitializeInteractableComponent(TScriptInterface<IInteractableActor> OwnerActor) override;
+	virtual class UInteractable* GetInteractableComponent() const override { return InteractableComponent; }
+	virtual class UStaticMeshComponent* GetInteractableMesh() const override { return DoorMesh; }
+	virtual class UPrimitiveComponent* GetInteractableTrigger() const override { return InteractionTrigger; }
+
 
 };

@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "FirstPersonCharacter.h"
 #include "Interactable.h"
+#include "InteractableTrace.h"
 
 
 void AFirstPersonPlayerController::BeginPlay()
@@ -49,7 +50,7 @@ void AFirstPersonPlayerController::Move(const FInputActionValue& Value)
 
 void AFirstPersonPlayerController::Interact()
 {
-	FPCharacter->Interact();
+	FPCharacter->GetInteractableTraceComponent()->InteractFocuesedInteractable();
 }
 
 void AFirstPersonPlayerController::Look(const FInputActionValue& Value)
