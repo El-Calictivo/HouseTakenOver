@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractableActor.h"
-#include "Powerable.h"
+#include "Interactions/InteractableActor.h"
+#include "Interactions/Powerable.h"
 #include "LightSwitch.generated.h"
 
 UCLASS()

@@ -2,11 +2,11 @@
 
 
 #include "Gamemodes/TakenHouseGameMode.h"
-#include "Room.h"
+#include "House/Room.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "FirstPersonCharacter.h"
+#include "FirstPerson/FirstPersonCharacter.h"
 #include "Subsystems/HouseGraspSubsystem.h"
-#include "FirstPersonPlayerController.h"
+#include "FirstPerson/FirstPersonPlayerController.h"
 
 
 ATakenHouseGameMode::ATakenHouseGameMode()
@@ -34,11 +34,34 @@ ARoom* ATakenHouseGameMode::TryGraspingAvailableRoom()
 	}
 
 	ARoom* AvailableRoom = HouseGraspSubsystem->GetRandomRoom(ERoomState::AVAILABLE);
-	if (AvailableRoom) AvailableRoom->SetRoomState(ERoomState::BEING_TAKEN);
+
+	if (AvailableRoom) {
+
+		AvailableRoom->SetRoomState(ERoomState::BEING_TAKEN);
+		AvailableRoom->OnRoomStateChanged.AddUniqueDynamic(this, &ATakenHouseGameMode::OnRoomStateChanged);
+	}
 
 	return AvailableRoom;
 
 }
+
+void ATakenHouseGameMode::OnRoomStateChanged(ARoom* Room, const ERoomState OldState, ERoomState NewState)
+{
+	if (!Room)return;
+	UHouseGraspSubsystem* HouseGraspSubsystem = GetWorld()->GetSubsystem<UHouseGraspSubsystem>();
+	if (!HouseGraspSubsystem)return;
+
+
+	if (NewState == ERoomState::TAKEN) {
+
+		Room->OnRoomStateChanged.RemoveDynamic(this, &ATakenHouseGameMode::OnRoomStateChanged);
+		OnRoomTaken(Room);
+		if (HouseGraspSubsystem->GetRoomCollection(ERoomState::BEING_TAKEN)->IsEmpty())OnLastRoomTaken(Room);
+	}
+
+}
+
+
 
 void ATakenHouseGameMode::IncreaseRoomsGrasp()
 {

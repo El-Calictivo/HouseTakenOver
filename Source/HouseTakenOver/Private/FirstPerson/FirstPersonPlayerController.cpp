@@ -7,8 +7,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "FirstPersonCharacter.h"
-#include "Interactable.h"
-#include "InteractableTrace.h"
+#include "Interactions/Interactable.h"
+#include "Interactions/InteractableTrace.h"
 
 
 void AFirstPersonPlayerController::BeginPlay()

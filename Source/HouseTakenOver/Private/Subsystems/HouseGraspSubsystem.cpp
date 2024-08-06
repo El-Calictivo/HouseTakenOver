@@ -2,7 +2,7 @@
 
 
 #include "Subsystems/HouseGraspSubsystem.h"
-#include "Room.h"
+#include "House/Room.h"
 
 void UHouseGraspSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -14,7 +14,7 @@ void UHouseGraspSubsystem::RegisterRoom(ARoom* NewRoom)
 {
 	if (!NewRoom)return;
 	NewRoom->OnRoomStateChanged.AddUniqueDynamic(this, &UHouseGraspSubsystem::OnRoomStateChanged);
-	OnRoomStateChanged(NewRoom, ERoomState::UNASSIGNED, NewRoom->GetRoomState());
+	NewRoom->OnRoomStateChanged.Broadcast(NewRoom, ERoomState::UNASSIGNED, NewRoom->GetRoomState());
 
 }
 
@@ -105,6 +105,8 @@ void UHouseGraspSubsystem::OnRoomStateChanged(ARoom* Room, const ERoomState OldS
 {
 	GetRoomCollection(OldState)->Remove(Room);
 	GetRoomCollection(NewState)->AddUnique(Room);
+
+	if (NewState == ERoomState::TAKEN) OnRoomTaken.Broadcast(Room);
 }
 
 void UHouseGraspSubsystem::Deinitialize()

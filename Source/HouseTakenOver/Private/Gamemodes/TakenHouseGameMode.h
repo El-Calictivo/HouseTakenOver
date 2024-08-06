@@ -9,6 +9,9 @@
 /**
  *
  */
+
+class ARoom;
+
 UCLASS()
 class ATakenHouseGameMode : public AGameModeBase
 {
@@ -58,7 +61,18 @@ protected:
 protected:
 
 	UFUNCTION(BlueprintCallable)
-	class ARoom* TryGraspingAvailableRoom();
+	ARoom* TryGraspingAvailableRoom();
+
+	UFUNCTION()
+	void OnRoomStateChanged(ARoom* Room, const ERoomState OldState, ERoomState NewState);
+
+	//Fires Everytime a Room is set to Taken
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnRoomTaken(ARoom* RoomTaken);
+
+	//Fires Only if A Room is Taken and is the last one being directly Grasped
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnLastRoomTaken(ARoom* RoomTaken) ;
 
 	UFUNCTION(BlueprintCallable)
 	void IncreaseRoomsGrasp();

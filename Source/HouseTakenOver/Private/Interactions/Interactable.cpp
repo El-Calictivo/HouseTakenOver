@@ -2,8 +2,8 @@
 
 
 #include "Interactable.h"
-#include <FirstPersonCharacter.h>
-#include <FirstPersonPlayerController.h>
+#include <FirstPerson/FirstPersonCharacter.h>
+#include <FirstPerson/FirstPersonPlayerController.h>
 #include <Kismet/GameplayStatics.h>
 #include "InteractableActor.h"
 #include "Components/WidgetComponent.h"

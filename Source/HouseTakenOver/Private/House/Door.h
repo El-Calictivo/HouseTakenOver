@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractableActor.h"
+#include "Interactions/InteractableActor.h"
 #include "Door.generated.h"
 
 

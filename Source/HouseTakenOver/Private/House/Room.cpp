@@ -69,7 +69,7 @@ void ARoom::IncreaseGraspLevel(float GraspAmount)
 
 		for (ADoor* Door : ConnectedDoors)
 		{
-			if (Door)Door->OnDoorStateChanged.Broadcast(EDoorState::TAKEN);
+			if (Door)Door->SetDoorState(EDoorState::TAKEN);
 
 		}
 	}

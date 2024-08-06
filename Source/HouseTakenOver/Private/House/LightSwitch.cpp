@@ -3,7 +3,7 @@
 
 #include "LightSwitch.h"
 #include <Components/BoxComponent.h>
-#include "Interactable.h"
+#include "Interactions/Interactable.h"
 
 // Sets default values
 ALightSwitch::ALightSwitch()

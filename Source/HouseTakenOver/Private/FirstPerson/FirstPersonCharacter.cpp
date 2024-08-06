@@ -4,7 +4,7 @@
 #include "FirstPersonCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
-#include "InteractableTrace.h"
+#include "Interactions/InteractableTrace.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 

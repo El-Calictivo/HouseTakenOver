@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
-#include <RoomState.h>
+#include <House/RoomState.h>
 #include "HouseGraspSubsystem.generated.h"
 
 
 class ARoom;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomDelegate,  ARoom*, Room);
 
 UCLASS()
 class UHouseGraspSubsystem : public UWorldSubsystem
@@ -27,10 +28,13 @@ protected:
 	TArray<ARoom*> RoomsSealed;
 	TArray<ARoom*> RoomsUnassigned;
 
+	UFUNCTION()
 	void OnRoomStateChanged(ARoom* Room, const ERoomState OldState, const ERoomState NewState);
 
 public:
 	TArray<ARoom*>* GetRoomCollection(const ERoomState RoomState);
+	
+	UFUNCTION()
 	void RegisterRoom(ARoom* NewRoom);
 
 	UFUNCTION(BlueprintPure)
@@ -50,8 +54,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void GraspRoomsByState(const ERoomState RoomsState, const float GraspAmount);
 
-
 	UFUNCTION(BlueprintCallable)
 	ARoom* GetRandomRoom(const ERoomState RoomState);
 
+	FRoomDelegate OnRoomTaken;
 };

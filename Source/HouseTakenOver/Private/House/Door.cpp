@@ -2,7 +2,7 @@
 
 
 #include "Door.h"
-#include "Interactable.h"
+#include "Interactions/Interactable.h"
 #include "Components/BoxComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -39,18 +39,6 @@ ADoor::ADoor()
 
 }
 
-void ADoor::FlipFlopDoor()
-{
-	switch (DoorState)
-	{
-	case EDoorState::CLOSED:
-		SetDoorState(EDoorState::OPEN);
-		break;
-	default:
-		SetDoorState(EDoorState::CLOSED);
-	}
-}
-
 // Called when the game starts or when spawned
 void ADoor::BeginPlay()
 {
@@ -61,6 +49,22 @@ void ADoor::BeginPlay()
 	OnDoorStateChanged.AddUniqueDynamic(this, &ADoor::HandleOnDoorStateChanged);
 	OnDoorStateChanged.Broadcast(DoorState);
 
+}
+
+void ADoor::FlipFlopDoor()
+{
+
+	switch (DoorState)
+	{
+	case EDoorState::CLOSED:
+		SetDoorState(EDoorState::OPEN);
+		break;
+	case EDoorState::OPEN:
+		SetDoorState(EDoorState::CLOSED);
+		break;
+	default:
+		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, TEXT("The door will not move"));
+	}
 }
 
 
@@ -75,7 +79,7 @@ void ADoor::HandleOnDoorStateChanged(const EDoorState NewDoorState)
 
 	default:
 		DoorMesh->SetRelativeRotation(FRotator::ZeroRotator, true);
-		
+
 	}
 }
 
