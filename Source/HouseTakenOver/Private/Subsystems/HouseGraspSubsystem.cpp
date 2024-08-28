@@ -70,6 +70,27 @@ ARoom* UHouseGraspSubsystem::GetRandomRoom(const ERoomState RoomState)
 	}
 }
 
+void UHouseGraspSubsystem::AdvanceDay()
+{
+	Hours++;
+	if (Hours >= HoursTillDawn) {
+		Hours = HoursTillDawn;
+
+	}
+}
+
+float UHouseGraspSubsystem::GetProgress() const
+{
+	return Hours / HoursTillDawn;
+}
+
+float UHouseGraspSubsystem::GetCurrentGraspForceMultiplier() const
+{
+	if (!GraspProgression)return 1;
+	return GraspProgression->GetFloatValue(GetProgress());
+
+}
+
 float UHouseGraspSubsystem::GetRandomValueFromRange(const FVector2f& ValueRange)
 {
 	return FMath::RandRange(FMath::Min(ValueRange.X, ValueRange.Y), FMath::Max(ValueRange.X, ValueRange.Y));
@@ -99,6 +120,15 @@ TArray<ARoom*>* UHouseGraspSubsystem::GetRoomCollection(const ERoomState RoomSta
 	}
 }
 
+void UHouseGraspSubsystem::SetHoursTillDawn(uint8 NewHoursTillDawn)
+{
+	HoursTillDawn = NewHoursTillDawn;
+}
+
+void UHouseGraspSubsystem::SetGraspProgression(UCurveFloat* NewGraspProgression)
+{
+	GraspProgression = NewGraspProgression;
+}
 
 
 void UHouseGraspSubsystem::OnRoomStateChanged(ARoom* Room, const ERoomState OldState, const ERoomState NewState)

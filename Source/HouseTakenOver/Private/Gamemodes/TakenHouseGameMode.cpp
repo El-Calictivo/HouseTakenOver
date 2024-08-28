@@ -79,13 +79,30 @@ void ATakenHouseGameMode::SpreadSealedRoomsInfluence()
 	IncreaseAdjacentRoomsGraspBy(ERoomState::SEALED, UHouseGraspSubsystem::GetRandomValueFromRange(SealedRoomsInfluence));
 }
 
+void ATakenHouseGameMode::InitializeGraspSubsystem()
+{
+	UHouseGraspSubsystem* HouseGraspSubsystem = GetWorld()->GetSubsystem<UHouseGraspSubsystem>();
+	if (!HouseGraspSubsystem)return;
+
+	HouseGraspSubsystem->SetGraspProgression(GraspForceProgressionCurve);
+	HouseGraspSubsystem->SetHoursTillDawn(NightDuration);
+
+}
+
+void ATakenHouseGameMode::NextHour()
+{
+	UHouseGraspSubsystem* HouseGraspSubsystem = GetWorld()->GetSubsystem<UHouseGraspSubsystem>();
+	if (!HouseGraspSubsystem)return;
+	HouseGraspSubsystem->AdvanceDay();
+}
+
 
 void ATakenHouseGameMode::IncreaseRoomsGraspBy(const ERoomState State, const float GraspAmount)
 {
 	UHouseGraspSubsystem* HouseGraspSubsystem = GetWorld()->GetSubsystem<UHouseGraspSubsystem>();
 	if (!HouseGraspSubsystem)return;
 
-	HouseGraspSubsystem->GraspRoomsByState(State, GraspAmount);
+	HouseGraspSubsystem->GraspRoomsByState(State, GraspAmount * HouseGraspSubsystem->GetCurrentGraspForceMultiplier());
 
 }
 
@@ -94,7 +111,7 @@ void ATakenHouseGameMode::IncreaseAdjacentRoomsGraspBy(const ERoomState State, c
 	UHouseGraspSubsystem* HouseGraspSubsystem = GetWorld()->GetSubsystem<UHouseGraspSubsystem>();
 	if (!HouseGraspSubsystem)return;
 
-	HouseGraspSubsystem->GraspAdjacentRooms(*HouseGraspSubsystem->GetRoomCollection(ERoomState::TAKEN), GraspAmount);
+	HouseGraspSubsystem->GraspAdjacentRooms(*HouseGraspSubsystem->GetRoomCollection(ERoomState::TAKEN), GraspAmount * HouseGraspSubsystem->GetCurrentGraspForceMultiplier());
 }
 
 

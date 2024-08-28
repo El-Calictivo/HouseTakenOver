@@ -25,23 +25,42 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	class USceneComponent* Root;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UPrimitiveComponent* RoomBounds;
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	class UPostProcessComponent* PostProcessComponent;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Grasp")
+	ERoomState RoomState = ERoomState::UNASSIGNED;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Grasp")
 	float GraspedLevel;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grasp")
 	float GraspLevelLimit = 100;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grasp")
+	UCurveFloat* DesaturationPostVfxCurve;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "House")
 	TMap<ARoom*, FAdjacentRoom> AdjacentRooms;
 
-	UPROPERTY(EditInstanceOnly)
+	UPROPERTY(EditInstanceOnly, Category = "House")
 	TSet<class ADoor*> ConnectedDoors;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
-	ERoomState RoomState = ERoomState::UNASSIGNED;
+
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Debug")
 	bool bDegugLines = true;
+
+	UFUNCTION()
+	void OnGraspedLevelChanged(float GraspLevel);
 
 
 	UFUNCTION()
@@ -51,7 +70,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
+	UFUNCTION()
+	float GetNormalizedGraspLevel() const { return GraspedLevel / GraspLevelLimit; };
 
 	UFUNCTION(BlueprintCallable)
 	void IncreaseGraspLevel(float GraspAmount);
@@ -62,8 +82,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	ERoomState GetRoomState() const;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnGraspedLevelChanged(float GraspLevel);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnRoomStateChanged OnRoomStateChanged;

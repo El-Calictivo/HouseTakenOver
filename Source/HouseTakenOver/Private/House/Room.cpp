@@ -4,12 +4,30 @@
 #include "Room.h"
 #include "Door.h"
 #include <Subsystems/HouseGraspSubsystem.h>
+#include "Components/PostProcessComponent.h"
+#include "Components/BoxComponent.h"
+
 #include "Selection.h"
 // Sets default values
 ARoom::ARoom()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root Scene"));
+	SetRootComponent(Root);
+
+	UBoxComponent* BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Room Bounds"));
+	BoxComponent->SetBoxExtent(FVector(250, 250, 135));
+	RoomBounds = BoxComponent;
+	RoomBounds->SetupAttachment(Root);
+
+	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("Post Processing Volume"));
+	PostProcessComponent->Priority = 100;
+	PostProcessComponent->bUnbound = false;
+	PostProcessComponent->Settings.bOverride_ColorSaturation = true;
+	PostProcessComponent->SetupAttachment(RoomBounds);
+
 
 }
 
@@ -25,6 +43,16 @@ void ARoom::BeginPlay()
 		if (!Door)continue;
 		Door->OnDoorStateChanged.AddUniqueDynamic(this, &ARoom::OnDoorStateChanged);
 	}
+
+}
+
+void ARoom::OnGraspedLevelChanged(float GraspLevel)
+{
+
+	float InvertedValue = DesaturationPostVfxCurve ? DesaturationPostVfxCurve->GetFloatValue(GraspLevel) : 1 - GraspLevel;
+
+	FPostProcessSettings& Settings = PostProcessComponent->Settings;
+	Settings.ColorSaturation = FVector4(InvertedValue, InvertedValue, InvertedValue, InvertedValue);
 
 }
 
@@ -95,7 +123,7 @@ ERoomState ARoom::GetRoomState() const
 #if WITH_EDITOR
 void ARoom::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
-	Super::PostEditChangeProperty(PropertyChangedEvent);	
+	Super::PostEditChangeProperty(PropertyChangedEvent);
 	DrawAdjacentRoomsConnectionNodes(0.1);
 	DrawConnectedDoorNodes(3);
 }
@@ -134,9 +162,9 @@ void ARoom::DrawConnectedDoorNodes(const float Lifetime)
 			if (!Door)continue;
 			FVector StartPoint = GetActorLocation(); // Replace with your start point
 			FVector EndPoint = Door->GetActorLocation(); // Replace with your end point
-			
+
 			DrawDebugLine(GetWorld(), StartPoint, EndPoint, FColor::Blue, false, -1, 0, 2);
-			DrawDebugSphere(GetWorld(), EndPoint, 20,6, FColor::Blue, false, -1, 0, 15);
+			DrawDebugSphere(GetWorld(), EndPoint, 20, 6, FColor::Blue, false, -1, 0, 15);
 
 		}
 	}

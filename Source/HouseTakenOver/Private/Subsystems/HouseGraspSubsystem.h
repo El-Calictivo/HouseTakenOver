@@ -22,17 +22,44 @@ public:
 
 protected:
 
+	UPROPERTY()
 	TArray<ARoom*> RoomsAvailable;
-	TArray<ARoom*> RoomsTaken;
+
+	UPROPERTY()
+	TArray<ARoom*> RoomsTaken;	
+
+	UPROPERTY()
 	TArray<ARoom*> RoomsBeingTaken;
+
+	UPROPERTY()
 	TArray<ARoom*> RoomsSealed;
+
+	UPROPERTY()
 	TArray<ARoom*> RoomsUnassigned;
+
+	UPROPERTY()
+	uint8 Hours = 0;
+
+	UPROPERTY()
+	UCurveFloat* GraspProgression;
+
+	UPROPERTY()
+	uint8 HoursTillDawn = 8;
+
 
 	UFUNCTION()
 	void OnRoomStateChanged(ARoom* Room, const ERoomState OldState, const ERoomState NewState);
 
 public:
+
+
 	TArray<ARoom*>* GetRoomCollection(const ERoomState RoomState);
+
+	UFUNCTION()
+	void SetHoursTillDawn(uint8 NewHoursTillDawn); 
+
+	UFUNCTION()
+	void SetGraspProgression(UCurveFloat* NewGraspProgression);
 	
 	UFUNCTION()
 	void RegisterRoom(ARoom* NewRoom);
@@ -56,6 +83,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	ARoom* GetRandomRoom(const ERoomState RoomState);
+
+	UFUNCTION(BlueprintCallable)
+	void AdvanceDay();
+
+	UFUNCTION(BlueprintCallable)
+	float GetProgress() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetCurrentGraspForceMultiplier() const;
+
 
 	FRoomDelegate OnRoomTaken;
 };
