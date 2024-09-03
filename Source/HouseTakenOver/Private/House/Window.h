@@ -21,16 +21,23 @@ class AWindow : public AActor, public IInteractableActor
 {
 	GENERATED_BODY()
 
+public:
+	AWindow();
 
 protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class USceneComponent* Root;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UInteractable* InteractableComponent;
 
-public:
-	// Sets default values for this actor's properties
-	AWindow();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UStaticMeshComponent* WindowMesh;
 
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UPrimitiveComponent* InteractionCollider;
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -50,6 +57,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", ClampMax = "1.0"))
 	float ReopeningChance = 0.15f;
+
+	//Functuion
+
+	UFUNCTION()
+	void CloseWindow();
 
 	UFUNCTION(BlueprintCallable)
 	void IncreaseRoomGrasp(float GraspAmount);
@@ -72,8 +84,8 @@ public:
 public:
 	//Interactable Actor Interface method
 	virtual void InitializeInteractableComponent(TScriptInterface<IInteractableActor> OwnerActor) override;
-	virtual class UInteractable* GetInteractableComponent() const override { return nullptr; }
-	virtual class UStaticMeshComponent* GetInteractableMesh() const override { return nullptr; }
-	virtual class UPrimitiveComponent* GetInteractableTrigger() const override { return nullptr; }
+	virtual class UInteractable* GetInteractableComponent() const override { return InteractableComponent; }
+	virtual class UStaticMeshComponent* GetInteractableMesh() const override { return WindowMesh; }
+	virtual class UPrimitiveComponent* GetInteractableTrigger() const override { return InteractionCollider; }
 
 };
