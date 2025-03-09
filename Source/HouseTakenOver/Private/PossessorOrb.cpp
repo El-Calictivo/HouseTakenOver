@@ -26,7 +26,14 @@ void APossessorOrb::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void APossessorOrb::InfluenceRoom(ARoom* RoomToAttach)
+bool APossessorOrb::InfluenceRoom(ARoom* RoomToAttach)
 {
+	if (RoomToAttach == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red,TEXT("Invalid room passed"));
+		return false;
+	}
+
 	SetActorLocation(RoomToAttach->GetActorLocation());
+	return true;
 }

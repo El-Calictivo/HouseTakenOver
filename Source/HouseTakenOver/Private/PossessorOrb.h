@@ -20,11 +20,11 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
-	bool bShouldAutoHideOnPlay;
+	bool bShouldAutoHideOnPlay=false;
 
 public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-	void InfluenceRoom(ARoom* RoomToAttach);
+	bool InfluenceRoom(ARoom* RoomToAttach);
 };
