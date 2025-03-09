@@ -5,7 +5,9 @@ Saved
 Content
 .vscode
 .vs
-.idea
+/.idea
+/ProjectSettings/RiderScriptEditorPersistedState.asset
+*.sln.DotSettings*
 *.VC.db
 *.opensdf
 *.opendb
