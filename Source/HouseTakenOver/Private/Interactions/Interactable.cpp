@@ -67,7 +67,7 @@ void UInteractable::Focus(bool bIsFocused)
 {
 	OnPlayerChangedFocus.Broadcast(bIsFocused);
 
-	if (Mesh)Mesh->SetRenderCustomDepth(bIsFocused);
+	// if (Mesh)Mesh->SetRenderCustomDepth(bIsFocused);
 
 }
 
