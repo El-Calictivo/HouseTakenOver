@@ -1,18 +1,50 @@
-Binaries
-DerivedDataCache
-Intermediate
-Saved
-Content
-.vscode
+#################################
+# Unreal Engine Generated Files #
+#################################
+/[Bb]uild
+/[Bb]uilds
+/Binaries
+/DerivedDataCache
+/Intermediate
+/Saved
+
+#################################
+# Visual Studio Generated Files #
+#################################
+# Cache Directory
 .vs
-/.idea
-/ProjectSettings/RiderScriptEditorPersistedState.asset
-*.sln.DotSettings*
-*.VC.db
-*.opensdf
-*.opendb
-*.sdf
-*.sln
+# User Specific Files
+*.rsuser
 *.suo
-*.xcodeproj
-*.xcworkspace
+*.user
+*.userosscache
+*.sln.docstates
+# CPP Cache Files
+*.VC.db
+*.opendb
+*.opensdf
+*.sdf
+# Solution Files
+*.sln
+# VSCode Cache Directory
+.vscode
+# VSCode History Files
+**/.history
+
+###################################
+# JetBrains Rider Generated Files #
+###################################
+# Cache Directory
+.idea
+
+# Solution and Project Files
+*.sln
+*.csproj
+*.sln.DotSettings
+*.sln.DotSettings.user
+
+#################################
+# Miscellaneous Generated Files #
+#################################
+# ADD AS NEED BE
+
