@@ -92,7 +92,7 @@ protected:
 	void SpreadSealedRoomsInfluence();
 
 	UFUNCTION(BlueprintCallable)
-	void InitializeGraspSubsystem();
+	void InitializeGraspSubsystem() const;
 
 	UFUNCTION(BlueprintCallable)
 	void NextHour();

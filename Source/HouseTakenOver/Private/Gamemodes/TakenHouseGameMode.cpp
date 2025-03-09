@@ -87,7 +87,7 @@ void ATakenHouseGameMode::SpreadSealedRoomsInfluence()
 	                             UHouseGraspSubsystem::GetRandomValueFromRange(SealedRoomsInfluence));
 }
 
-void ATakenHouseGameMode::InitializeGraspSubsystem()
+void ATakenHouseGameMode::InitializeGraspSubsystem() const
 {
 	UHouseGraspSubsystem* HouseGraspSubsystem = GetWorld()->GetSubsystem<UHouseGraspSubsystem>();
 	if (!HouseGraspSubsystem)
