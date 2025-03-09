@@ -7,9 +7,10 @@
 #include <House/RoomState.h>
 #include "HouseGraspSubsystem.generated.h"
 
-
 class ARoom;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomDelegate,  ARoom*, Room);
+class APossessorOrb;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomDelegate, ARoom*, Room);
 
 UCLASS()
 class UHouseGraspSubsystem : public UWorldSubsystem
@@ -21,12 +22,14 @@ public:
 	virtual void Deinitialize() override;
 
 protected:
+	UPROPERTY(BlueprintReadOnly)
+	TArray<APossessorOrb*> PossessionOrbs;
 
 	UPROPERTY()
 	TArray<ARoom*> RoomsAvailable;
 
 	UPROPERTY()
-	TArray<ARoom*> RoomsTaken;	
+	TArray<ARoom*> RoomsTaken;
 
 	UPROPERTY()
 	TArray<ARoom*> RoomsBeingTaken;
@@ -51,18 +54,19 @@ protected:
 	void OnRoomStateChanged(ARoom* Room, const ERoomState OldState, const ERoomState NewState);
 
 public:
-
-
 	TArray<ARoom*>* GetRoomCollection(const ERoomState RoomState);
 
 	UFUNCTION()
-	void SetHoursTillDawn(uint8 NewHoursTillDawn); 
+	void SetHoursTillDawn(uint8 NewHoursTillDawn);
 
 	UFUNCTION()
 	void SetGraspProgression(UCurveFloat* NewGraspProgression);
-	
+
 	UFUNCTION()
 	void RegisterRoom(ARoom* NewRoom);
+
+	UFUNCTION()
+	void RegisterPossessorOrb(APossessorOrb* NewPossessor);
 
 	UFUNCTION(BlueprintPure)
 	static float GetRandomValueFromRange(const FVector2f& ValueRange);
@@ -92,7 +96,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentGraspForceMultiplier() const;
-
 
 	FRoomDelegate OnRoomTaken;
 };

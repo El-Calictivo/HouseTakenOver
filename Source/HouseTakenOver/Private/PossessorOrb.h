@@ -4,22 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PossessionOrb.generated.h"
+#include "PossessorOrb.generated.h"
+
+class ARoom;
 
 UCLASS()
-class APossessionOrb : public AActor
+class APossessorOrb : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
-	APossessionOrb();
+	APossessorOrb();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere)
+	bool bShouldAutoHideOnPlay;
+
 public:
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	void InfluenceRoom(ARoom* RoomToAttach);
 };

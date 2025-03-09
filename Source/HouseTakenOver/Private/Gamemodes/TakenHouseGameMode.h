@@ -21,6 +21,7 @@ public:
 	ATakenHouseGameMode();
 
 protected:
+	virtual void BeginPlay() override;
 
 
 	/*COOLDOWNS*/
@@ -65,8 +66,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Grasp", meta = (ClampMin = "0.0"))
 	FVector2f SealedRoomsInfluence = FVector2f(2, 7);
 
-
-protected:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void OnLevelInitialized();
 
 	UFUNCTION(BlueprintCallable)
 	ARoom* TryGraspingAvailableRoom();
@@ -102,5 +103,4 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void IncreaseAdjacentRoomsGraspBy(const ERoomState State, const float GraspAmount);
-
 };

@@ -13,6 +13,11 @@ ATakenHouseGameMode::ATakenHouseGameMode()
 	PlayerControllerClass = AFirstPersonPlayerController::StaticClass();
 }
 
+void ATakenHouseGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 ARoom* ATakenHouseGameMode::TryGraspingAvailableRoom()
 {
 	UHouseGraspSubsystem* HouseGraspSubsystem = GetWorld()->GetSubsystem<UHouseGraspSubsystem>();
